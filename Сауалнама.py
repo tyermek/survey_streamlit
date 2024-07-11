@@ -159,7 +159,7 @@ def generate_qr_code(url):
 
 
 # Load questions from external file
-with open("C:/Users/toleb/OneDrive/Рабочий стол/Tele2/Python_scripts/pythonProject/questions.json", "r",
+with open("questions.json", "r",
           encoding="utf-8") as f:
     questions_with_options = json.load(f)
 
