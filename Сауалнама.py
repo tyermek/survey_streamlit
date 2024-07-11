@@ -60,8 +60,8 @@ st.sidebar.header("Сауалнаманы құру")
 # Function to create URL for Google Form
 SCOPES = ["https://www.googleapis.com/auth/forms.body", "https://www.googleapis.com/auth/forms.responses.readonly"]
 DISCOVERY_DOC = "https://forms.googleapis.com/$discovery/rest?version=v1"
-CREDENTIALS_FILE = "C:/Users/toleb/OneDrive/Рабочий стол/Tele2/Python_scripts/pythonProject/client_secrets.json"
-TOKEN_FILE = "C:/Users/toleb/OneDrive/Рабочий стол/Tele2/Python_scripts/pythonProject/token.pickle"
+CREDENTIALS_FILE = "client_secrets.json"
+TOKEN_FILE = "token.pickle"
 
 
 def find_similar_questions(selected_question, questions, X_pca, top_n=5):
