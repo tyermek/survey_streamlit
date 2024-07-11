@@ -14,8 +14,16 @@ st.markdown("# Визуализация")
 # Function to create URL for Google Form
 SCOPES = ["https://www.googleapis.com/auth/forms.body", "https://www.googleapis.com/auth/forms.responses.readonly"]
 DISCOVERY_DOC = "https://forms.googleapis.com/$discovery/rest?version=v1"
-CREDENTIALS_FILE = "../client_secrets.json"
-TOKEN_FILE = "../token.pickle"
+
+# Get the current directory of the script
+current_directory = os.path.dirname(__file__)
+
+# Construct the path to the parent directory
+parent_directory = os.path.abspath(os.path.join(current_directory, os.pardir))
+
+# Construct the full paths to the necessary files in the parent directory
+CREDENTIALS_FILE = os.path.join(parent_directory, "client_secrets.json")
+TOKEN_FILE = os.path.join(parent_directory, "token.pickle")
 
 
 def get_credentials():
