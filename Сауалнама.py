@@ -22,6 +22,7 @@ def check_password():
 
     def login_form():
         """Form with widgets to collect user information"""
+        st.header("Жүйеге кіру")  # Added header "login" in Kazakh
         with st.form("Credentials"):
             st.text_input("Пайдаланушы аты", key="username")
             st.text_input("Құпия сөз", type="password", key="password")
@@ -159,8 +160,7 @@ def generate_qr_code(url):
 
 
 # Load questions from external file
-with open("questions.json", "r",
-          encoding="utf-8") as f:
+with open("questions.json", "r", encoding="utf-8") as f:
     questions_with_options = json.load(f)
 
 # Extract just the questions for processing
