@@ -13,12 +13,10 @@ if not st.session_state.get("password_correct", False):
     st.error("Алдымен жүйеге кіру керек!")
     st.stop()
 
-
 # Function to load the Excel file with caching
 @st.cache_data
 def load_data():
-    return pd.read_excel("./35950.xlsx", sheet_name="35950")
-
+    return pd.read_excel("/mnt/data/35950.xlsx", sheet_name="35950")  # Update the path as needed
 
 # Load the data
 df = load_data()
@@ -48,14 +46,12 @@ for question, selected_values in filters.items():
     if selected_values:
         filtered_df = filtered_df[filtered_df[question].isin(selected_values)]
 
-
 # Plot overall statistics
 def plot_overall_stats(df):
     st.subheader("Статистика")
     col1, col2 = st.columns(2)
     col1.metric("Жауаптар саны", len(df))
     col2.metric("Сұрақтар саны", len(df.columns) - 2)  # Subtract 2 for Response ID and Submitted at
-
 
 # Plot responses
 def plot_responses(df):
@@ -98,7 +94,6 @@ def plot_responses(df):
                  title="Сіз қашықтықтан оқыту кезінде белсенді бола алдыңыз ба?")
     fig.update_layout(xaxis_tickangle=-45)
     st.plotly_chart(fig)
-
 
 # Display statistics and visualizations
 plot_overall_stats(filtered_df)
