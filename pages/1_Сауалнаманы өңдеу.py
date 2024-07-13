@@ -51,7 +51,7 @@ def add_question():
 
 def reset_form():
     st.session_state.clear()
-    st.experimental_rerun()
+    st.rerun()
 
 
 # Initialize session state for answer options and question text
@@ -81,7 +81,7 @@ def add_option():
 # Function to show all questions
 def show_all_questions():
     st.session_state['show_questions'] = True
-    st.experimental_rerun()
+    st.rerun()
 
 
 # Streamlit form for adding questions
@@ -133,4 +133,4 @@ else:
     # Button to go back to the form
     if st.button("Жаңа сұрақ қосу"):
         st.session_state['show_questions'] = False
-        st.experimental_rerun()
+        st.rerun()
