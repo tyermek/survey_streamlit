@@ -125,3 +125,4 @@ else:
     # Button to go back to the form
     if st.button("Жаңа сұрақ қосу"):
         st.session_state['show_questions'] = False
+        st.experimental_rerun()
