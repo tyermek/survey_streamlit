@@ -14,7 +14,7 @@ if not st.session_state.get("password_correct", False):
     st.stop()
 
 # File paths
-QUESTIONS_FILE = "questions.json"
+QUESTIONS_FILE = "../questions.json"
 
 
 # Load questions
