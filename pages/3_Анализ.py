@@ -17,7 +17,7 @@ if not st.session_state.get("password_correct", False):
 # Function to load the Excel file with caching
 @st.cache_data
 def load_data():
-    return pd.read_excel("C:/Users/toleb/OneDrive/Рабочий стол/Tele2/Python_scripts/pythonProject/pages/35950.xlsx",
+    return pd.read_excel("35950.xlsx",
                          sheet_name="35950")
 
 
