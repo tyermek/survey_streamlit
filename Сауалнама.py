@@ -22,7 +22,6 @@ def check_password():
 
     def login_form():
         """Form with widgets to collect user information"""
-        st.header("Жүйеге кіру")  # Added header "login" in Kazakh
         with st.form("Credentials"):
             st.text_input("Пайдаланушы аты", key="username")
             st.text_input("Құпия сөз", type="password", key="password")
@@ -61,8 +60,8 @@ st.sidebar.header("Сауалнаманы құру")
 # Function to create URL for Google Form
 SCOPES = ["https://www.googleapis.com/auth/forms.body", "https://www.googleapis.com/auth/forms.responses.readonly"]
 DISCOVERY_DOC = "https://forms.googleapis.com/$discovery/rest?version=v1"
-CREDENTIALS_FILE = "client_secrets.json"
-TOKEN_FILE = "token.pickle"
+CREDENTIALS_FILE = "C:/Users/toleb/OneDrive/Рабочий стол/Tele2/Python_scripts/pythonProject/client_secrets.json"
+TOKEN_FILE = "C:/Users/toleb/OneDrive/Рабочий стол/Tele2/Python_scripts/pythonProject/token.pickle"
 
 
 def find_similar_questions(selected_question, questions, X_pca, top_n=5):
@@ -112,7 +111,7 @@ def create_question(title, options, index, question_type="RADIO"):
     }
 
 
-def create_google_form(similar_questions):
+def create_google_form(mandatory_questions, similar_questions):
     creds = get_credentials()
     service = build('forms', 'v1', credentials=creds, discoveryServiceUrl=DISCOVERY_DOC)
 
@@ -128,11 +127,19 @@ def create_google_form(similar_questions):
         "requests": []
     }
 
+    # Add mandatory questions first
+    for index, q in enumerate(mandatory_questions):
+        questions_requests["requests"].append(
+            create_question(q["question"], q["options"], index, q["type"])
+        )
+
+    # Add similar questions selected by the user
+    start_index = len(mandatory_questions)
     for index, question in enumerate(similar_questions):
-        for q in questions_with_options:
+        for q in optional_questions_with_options:
             if q["question"] == question:
                 questions_requests["requests"].append(
-                    create_question(q["question"], q["options"], index, q["type"])
+                    create_question(q["question"], q["options"], start_index + index, q["type"])
                 )
                 break
 
@@ -159,16 +166,20 @@ def generate_qr_code(url):
     return byte_im
 
 
-# Load questions from external file
-with open("questions.json", "r", encoding="utf-8") as f:
-    questions_with_options = json.load(f)
+# Load mandatory questions from external file
+with open("C:/Users/toleb/OneDrive/Рабочий стол/Tele2/Python_scripts/pythonProject/questions_mandatory.json", "r", encoding="utf-8") as f:
+    mandatory_questions_with_options = json.load(f)
 
-# Extract just the questions for processing
-questions = [q["question"] for q in questions_with_options]
+# Load optional questions from external file
+with open("C:/Users/toleb/OneDrive/Рабочий стол/Tele2/Python_scripts/pythonProject/questions.json", "r", encoding="utf-8") as f:
+    optional_questions_with_options = json.load(f)
 
-# Convert questions to TF-IDF matrix
+# Extract optional questions for processing
+optional_questions = [q["question"] for q in optional_questions_with_options]
+
+# Convert optional questions to TF-IDF matrix
 vectorizer = TfidfVectorizer()
-X = vectorizer.fit_transform(questions)
+X = vectorizer.fit_transform(optional_questions)
 
 # Apply PCA for dimensionality reduction
 pca = PCA(n_components=2)
@@ -183,7 +194,7 @@ if "form_creation_started" not in st.session_state:
 
 # Only show the question selection UI if the form creation has not started
 if not st.session_state.form_creation_started:
-    selected_question = st.selectbox("Сұрақты таңдаңыз", options=questions)
+    selected_question = st.selectbox("Сұрақты таңдаңыз", options=optional_questions)
 
     if "show_text_input" not in st.session_state:
         st.session_state.show_text_input = False
@@ -202,10 +213,11 @@ if not st.session_state.form_creation_started:
 
         if st.button("Сұрақты сақтаңыз"):
             if new_question:
-                questions.append(new_question)
+                optional_questions.append(new_question)
                 st.success(f"Сұрақ қосылды: {new_question}")
+                selected_question = new_question
                 st.session_state.show_text_input = False
-                X = vectorizer.fit_transform(questions)
+                X = vectorizer.fit_transform(optional_questions)
                 X_pca = pca.fit_transform(X.toarray())
             else:
                 st.error("Сұрақты енгізіңіз")
@@ -215,7 +227,7 @@ if not st.session_state.form_creation_started:
         if st.button("Сауалнаманы құру"):
             st.session_state.form_creation_started = True
             with st.spinner("Сауалнама құрылуда..."):
-                form_url, form_id = create_google_form(find_similar_questions(selected_question, questions, X_pca))
+                form_url, form_id = create_google_form(mandatory_questions_with_options, find_similar_questions(selected_question, optional_questions, X_pca))
             st.session_state.form_url = form_url
             st.session_state.form_id = form_id
             st.experimental_rerun()
