@@ -20,7 +20,7 @@ def load_data():
 
 # Load the data
 df = load_data()
-
+st.write(df.columns)
 # Remove everything after "/" in the responses
 for col in df.columns:
     df[col] = df[col].astype(str).str.split('/ ').str[0].str.strip()
