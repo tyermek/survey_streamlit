@@ -14,8 +14,7 @@ if not st.session_state.get("password_correct", False):
     st.stop()
 
 # File paths
-QUESTIONS_FILE = "https://raw.githubusercontent.com/tyermek/survey_streamlit/main/questions.json"
-
+QUESTIONS_FILE = "questions.json"  # Use a relative path for local or adjust as needed
 
 # Load questions
 def load_questions(file_path):
@@ -24,16 +23,13 @@ def load_questions(file_path):
             return json.load(f)
     return []
 
-
 # Save questions
 def save_questions(questions, file_path):
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(questions, f, ensure_ascii=False, indent=4)
 
-
 # Load existing questions
 questions_with_options = load_questions(QUESTIONS_FILE)
-
 
 # Function to add a new question
 def add_question():
@@ -48,11 +44,10 @@ def add_question():
     time.sleep(2)
     reset_form()
 
-
 def reset_form():
-    st.session_state.clear()
-    st.rerun()
-
+    st.session_state['question_text'] = ""
+    st.session_state['answer_options'] = []
+    st.session_state['new_option'] = ""
 
 # Initialize session state for answer options and question text
 if 'answer_options' not in st.session_state:
@@ -70,19 +65,15 @@ if 'question_type' not in st.session_state:
 if 'show_questions' not in st.session_state:
     st.session_state['show_questions'] = False
 
-
 # Function to add an option
 def add_option():
     if st.session_state['new_option']:
         st.session_state['answer_options'].append(st.session_state['new_option'])
         st.session_state['new_option'] = ""  # Clear the input after adding
 
-
 # Function to show all questions
 def show_all_questions():
     st.session_state['show_questions'] = True
-    st.rerun()
-
 
 # Streamlit form for adding questions
 if not st.session_state['show_questions']:
@@ -133,4 +124,3 @@ else:
     # Button to go back to the form
     if st.button("Жаңа сұрақ қосу"):
         st.session_state['show_questions'] = False
-        st.rerun()
