@@ -75,6 +75,7 @@ def add_option():
 # Function to show all questions
 def show_all_questions():
     st.session_state['show_questions'] = True
+    st.experimental_rerun()
 
 # Streamlit form for adding questions
 if not st.session_state['show_questions']:
