@@ -32,25 +32,21 @@ def load_questions(github_api_url, github_token):
         content = response.json()
         # Decode the base64 content to get the JSON string
         questions_json = json.loads(base64.b64decode(content["content"]).decode("utf-8"))
-        return questions_json
+        return questions_json, content["sha"]
     except requests.RequestException as e:
         st.error(f"Failed to load questions: {e}")
-        return []
+        return [], None
 
 # Save questions to GitHub with authentication
-def save_questions(questions, github_api_url, github_token):
+def save_questions(questions, github_api_url, github_token, sha):
     headers = {
         "Authorization": f"token {github_token}",
         "Accept": "application/vnd.github.v3+json"
     }
-    # Get the current file's SHA
-    response = requests.get(github_api_url, headers=headers)
-    response.raise_for_status()
-    sha = response.json()["sha"]
 
     data = {
         "message": "Update questions",
-        "content": base64.b64encode(json.dumps(questions, ensure_ascii=False, indent=4).encode("utf-8")).decode("utf-8"),
+        "content": base64.b64encode(json.dumps(questions, ensure_ascii=False, indent=4).encode('utf-8')).decode('utf-8'),
         "sha": sha
     }
     response = requests.put(github_api_url, headers=headers, json=data)
@@ -89,7 +85,7 @@ def add_question():
         "type": "RADIO" if st.session_state['question_type'] == "Бір жауабы бар" else "CHECKBOX"
     }
     questions_with_options.append(new_question)
-    save_questions(questions_with_options, GITHUB_API_URL, GITHUB_TOKEN)
+    save_questions(questions_with_options, GITHUB_API_URL, GITHUB_TOKEN, sha)
     st.success("Сұрақ қосылды!")
     st.session_state['clear_form'] = True
     time.sleep(2)
@@ -103,8 +99,9 @@ def clear_form():
 
 # Function to show all questions
 def show_all_questions():
-    questions_with_options = load_questions(GITHUB_API_URL, GITHUB_TOKEN)
+    questions_with_options, sha = load_questions(GITHUB_API_URL, GITHUB_TOKEN)
     st.session_state['questions_with_options'] = questions_with_options
+    st.session_state['sha'] = sha
     st.session_state['show_questions'] = True
     st.experimental_rerun()
 
@@ -114,9 +111,12 @@ if st.session_state['clear_form']:
 
 # Load existing questions if not already loaded
 if 'questions_with_options' not in st.session_state:
-    st.session_state['questions_with_options'] = load_questions(GITHUB_API_URL, GITHUB_TOKEN)
+    questions_with_options, sha = load_questions(GITHUB_API_URL, GITHUB_TOKEN)
+    st.session_state['questions_with_options'] = questions_with_options
+    st.session_state['sha'] = sha
 
 questions_with_options = st.session_state['questions_with_options']
+sha = st.session_state['sha']
 
 # Streamlit form for adding questions
 if not st.session_state['show_questions']:
