@@ -68,9 +68,6 @@ if 'show_questions' not in st.session_state:
 if 'clear_form' not in st.session_state:
     st.session_state['clear_form'] = False
 
-if 'questions_with_options' not in st.session_state:
-    st.session_state['questions_with_options'] = []
-
 # Function to add an option
 def add_option():
     if st.session_state['new_option']:
@@ -84,8 +81,8 @@ def add_question():
         "options": st.session_state['answer_options'],
         "type": "RADIO" if st.session_state['question_type'] == "Бір жауабы бар" else "CHECKBOX"
     }
-    st.session_state['questions_with_options'].append(new_question)
-    save_questions(st.session_state['questions_with_options'], GITHUB_API_URL, GITHUB_TOKEN)
+    questions_with_options.append(new_question)
+    save_questions(questions_with_options, GITHUB_API_URL, GITHUB_TOKEN)
     st.success("Сұрақ қосылды!")
     st.session_state['clear_form'] = True
     time.sleep(2)
@@ -99,13 +96,20 @@ def clear_form():
 
 # Function to show all questions
 def show_all_questions():
-    st.session_state['questions_with_options'] = load_questions(QUESTIONS_FILE_URL)
+    questions_with_options = load_questions(QUESTIONS_FILE_URL)
+    st.session_state['questions_with_options'] = questions_with_options
     st.session_state['show_questions'] = True
     st.experimental_rerun()
 
 # Clear form if needed
 if st.session_state['clear_form']:
     clear_form()
+
+# Load existing questions if not already loaded
+if 'questions_with_options' not in st.session_state:
+    st.session_state['questions_with_options'] = load_questions(QUESTIONS_FILE_URL)
+
+questions_with_options = st.session_state['questions_with_options']
 
 # Streamlit form for adding questions
 if not st.session_state['show_questions']:
