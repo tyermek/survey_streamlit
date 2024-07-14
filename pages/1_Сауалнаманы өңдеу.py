@@ -49,29 +49,6 @@ def save_questions(questions, github_api_url, github_token):
     response = requests.put(github_api_url, headers=headers, json=data)
     response.raise_for_status()
 
-# Load existing questions
-questions_with_options = load_questions(QUESTIONS_FILE_URL)
-
-# Function to add a new question
-def add_question():
-    new_question = {
-        "question": st.session_state['question_text'],
-        "options": st.session_state['answer_options'],
-        "type": "RADIO" if st.session_state['question_type'] == "Бір жауабы бар" else "CHECKBOX"
-    }
-    questions_with_options.append(new_question)
-    save_questions(questions_with_options, GITHUB_API_URL, GITHUB_TOKEN)
-    st.success("Сұрақ қосылды!")
-    st.session_state['clear_form'] = True
-    time.sleep(2)
-    st.experimental_rerun()
-
-def clear_form():
-    st.session_state['question_text'] = ""
-    st.session_state['answer_options'] = []
-    st.session_state['new_option'] = ""
-    st.session_state['clear_form'] = False
-
 # Initialize session state for answer options and question text
 if 'answer_options' not in st.session_state:
     st.session_state['answer_options'] = []
@@ -91,11 +68,34 @@ if 'show_questions' not in st.session_state:
 if 'clear_form' not in st.session_state:
     st.session_state['clear_form'] = False
 
+if 'questions_with_options' not in st.session_state:
+    st.session_state['questions_with_options'] = load_questions(QUESTIONS_FILE_URL)
+
 # Function to add an option
 def add_option():
     if st.session_state['new_option']:
         st.session_state['answer_options'].append(st.session_state['new_option'])
         st.session_state['new_option'] = ""  # Clear the input after adding
+
+# Function to add a new question
+def add_question():
+    new_question = {
+        "question": st.session_state['question_text'],
+        "options": st.session_state['answer_options'],
+        "type": "RADIO" if st.session_state['question_type'] == "Бір жауабы бар" else "CHECKBOX"
+    }
+    st.session_state['questions_with_options'].append(new_question)
+    save_questions(st.session_state['questions_with_options'], GITHUB_API_URL, GITHUB_TOKEN)
+    st.success("Сұрақ қосылды!")
+    st.session_state['clear_form'] = True
+    time.sleep(2)
+    st.experimental_rerun()
+
+def clear_form():
+    st.session_state['question_text'] = ""
+    st.session_state['answer_options'] = []
+    st.session_state['new_option'] = ""
+    st.session_state['clear_form'] = False
 
 # Function to show all questions
 def show_all_questions():
@@ -107,17 +107,12 @@ def show_all_questions():
 if st.session_state['clear_form']:
     clear_form()
 
-# Load existing questions if not already loaded
-if 'questions_with_options' not in st.session_state:
-    st.session_state['questions_with_options'] = load_questions(QUESTIONS_FILE_URL)
-
 questions_with_options = st.session_state['questions_with_options']
 
 # Streamlit form for adding questions
 if not st.session_state['show_questions']:
     st.subheader("Жаңа сұрақ қосу")
-    st.selectbox("Сұрақ түрін таңдаңыз", options=["Бір жауабы бар", "Бір немесе бірнеше дұрыс жауабы бар"],
-                 key='question_type')
+    st.selectbox("Сұрақ түрін таңдаңыз", options=["Бір жауабы бар", "Бір немесе бірнеше дұрыс жауабы бар"], key='question_type')
     st.text_input("Сұрақты енгізіңіз", key='question_text')
 
     # Section to add options one by one
@@ -134,11 +129,8 @@ if not st.session_state['show_questions']:
         for idx, option in enumerate(st.session_state['answer_options']):
             st.write(f"{idx + 1}. {option}")
 
-    # Use narrower columns to place buttons closer
-    add_question_html = st.button("Сұрақты дерекқорға қосу")
-    show_questions_html = st.button("Дерекқорды көрсету")
-
-    if add_question_html:
+    # Buttons for adding the question and showing the database
+    if st.button("Сұрақты дерекқорға қосу"):
         if not st.session_state['question_text']:
             st.error("Сұрақты енгізіңіз")
         elif len(st.session_state['answer_options']) < 2:
@@ -146,7 +138,7 @@ if not st.session_state['show_questions']:
         else:
             add_question()
 
-    if show_questions_html:
+    if st.button("Дерекқорды көрсету"):
         show_all_questions()
 
 # Display all questions
