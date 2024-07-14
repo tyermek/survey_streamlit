@@ -50,7 +50,9 @@ def add_question():
     reset_form()
 
 def reset_form():
-    st.session_state.clear()
+    st.session_state['question_text'] = ""
+    st.session_state['answer_options'] = []
+    st.session_state['new_option'] = ""
     st.experimental_rerun()
 
 # Initialize session state for answer options and question text
