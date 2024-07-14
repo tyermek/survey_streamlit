@@ -43,17 +43,15 @@ def add_question():
         "type": "RADIO" if st.session_state['question_type'] == "Бір жауабы бар" else "CHECKBOX"
     }
     questions_with_options.append(new_question)
-    # Save questions to a local file instead of the URL (adjust as needed for your use case)
     save_questions(questions_with_options, "local_questions.json")
     st.success("Сұрақ қосылды!")
     time.sleep(2)
-    reset_form()
+    clear_form()
 
-def reset_form():
+def clear_form():
     st.session_state['question_text'] = ""
     st.session_state['answer_options'] = []
     st.session_state['new_option'] = ""
-    st.experimental_rerun()
 
 # Initialize session state for answer options and question text
 if 'answer_options' not in st.session_state:
@@ -104,8 +102,8 @@ if not st.session_state['show_questions']:
             st.write(f"{idx + 1}. {option}")
 
     # Use narrower columns to place buttons closer
-    add_question_html = st.button("Сұрақты дерекқорға қосу", key="add_question_html")
-    show_questions_html = st.button("Дерекқорды көрсету", key="show_questions_html")
+    add_question_html = st.button("Сұрақты дерекқорға қосу")
+    show_questions_html = st.button("Дерекқорды көрсету")
 
     if add_question_html:
         if not st.session_state['question_text']:
