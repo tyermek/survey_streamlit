@@ -45,8 +45,9 @@ def add_question():
     questions_with_options.append(new_question)
     save_questions(questions_with_options, "local_questions.json")
     st.success("Сұрақ қосылды!")
-    time.sleep(2)
     st.session_state['clear_form'] = True
+    time.sleep(2)
+    st.experimental_rerun()
 
 def clear_form():
     st.session_state['question_text'] = ""
