@@ -311,29 +311,5 @@
             "Жауап беруге қиналамын"
         ],
         "type": "RADIO"
-    },
-    {
-        "question": "a?",
-        "options": [
-            "go",
-            "no"
-        ],
-        "type": "RADIO"
-    },
-    {
-        "question": "c?",
-        "options": [
-            "d",
-            "q"
-        ],
-        "type": "RADIO"
-    },
-    {
-        "question": "sd?",
-        "options": [
-            "f",
-            "efe"
-        ],
-        "type": "RADIO"
     }
 ]
