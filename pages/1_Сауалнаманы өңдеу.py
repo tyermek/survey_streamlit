@@ -15,25 +15,43 @@ if not st.session_state.get("password_correct", False):
     st.stop()
 
 # File paths
-QUESTIONS_FILE = "https://raw.githubusercontent.com/tyermek/survey_streamlit/main/questions.json"
+QUESTIONS_FILE_URL = "https://raw.githubusercontent.com/tyermek/survey_streamlit/main/questions.json"
+QUESTIONS_FILE_PATH = "questions.json"
+GITHUB_REPO = "tyermek/survey_streamlit"
+GITHUB_TOKEN = st.secrets["github"]["token"]
+GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{QUESTIONS_FILE_PATH}"
 
 # Load questions
-def load_questions(file_path):
+def load_questions(file_url):
     try:
-        response = requests.get(file_path)
+        response = requests.get(file_url)
         response.raise_for_status()
         return response.json()
     except requests.RequestException as e:
         st.error(f"Failed to load questions: {e}")
         return []
 
-# Save questions
-def save_questions(questions, file_path):
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(questions, f, ensure_ascii=False, indent=4)
+# Save questions to GitHub
+def save_questions(questions, github_api_url, github_token):
+    headers = {
+        "Authorization": f"token {github_token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    # Get the current file's SHA
+    response = requests.get(github_api_url, headers=headers)
+    response.raise_for_status()
+    sha = response.json()["sha"]
+
+    data = {
+        "message": "Update questions",
+        "content": json.dumps(questions).encode("utf-8").decode("latin1"),  # Encode content to base64
+        "sha": sha
+    }
+    response = requests.put(github_api_url, headers=headers, json=data)
+    response.raise_for_status()
 
 # Load existing questions
-questions_with_options = load_questions(QUESTIONS_FILE)
+questions_with_options = load_questions(QUESTIONS_FILE_URL)
 
 # Function to add a new question
 def add_question():
@@ -43,7 +61,7 @@ def add_question():
         "type": "RADIO" if st.session_state['question_type'] == "Бір жауабы бар" else "CHECKBOX"
     }
     questions_with_options.append(new_question)
-    save_questions(questions_with_options, "local_questions.json")
+    save_questions(questions_with_options, GITHUB_API_URL, GITHUB_TOKEN)
     st.success("Сұрақ қосылды!")
     st.session_state['clear_form'] = True
     time.sleep(2)
