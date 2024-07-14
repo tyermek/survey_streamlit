@@ -18,7 +18,7 @@ if not st.session_state.get("password_correct", False):
 QUESTIONS_FILE_URL = "https://raw.githubusercontent.com/tyermek/survey_streamlit/main/questions.json"
 QUESTIONS_FILE_PATH = "questions.json"
 GITHUB_REPO = "tyermek/survey_streamlit"
-GITHUB_TOKEN = st.secrets["github"]["token"]
+GITHUB_TOKEN = st.secrets["github"]
 GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{QUESTIONS_FILE_PATH}"
 
 # Load questions
