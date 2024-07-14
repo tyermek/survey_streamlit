@@ -2,6 +2,7 @@ import time
 import streamlit as st
 import json
 import requests
+import base64
 
 # Set page configuration
 st.set_page_config(page_title="Сауалнаманы өңдеу", page_icon="📊")
@@ -30,7 +31,7 @@ def load_questions(github_api_url, github_token):
         response.raise_for_status()
         content = response.json()
         # Decode the base64 content to get the JSON string
-        questions_json = json.loads(content["content"].decode("utf-8"))
+        questions_json = json.loads(base64.b64decode(content["content"]).decode("utf-8"))
         return questions_json
     except requests.RequestException as e:
         st.error(f"Failed to load questions: {e}")
@@ -49,7 +50,7 @@ def save_questions(questions, github_api_url, github_token):
 
     data = {
         "message": "Update questions",
-        "content": json.dumps(questions, ensure_ascii=False, indent=4),  # Pretty-print JSON
+        "content": base64.b64encode(json.dumps(questions, ensure_ascii=False, indent=4).encode("utf-8")).decode("utf-8"),
         "sha": sha
     }
     response = requests.put(github_api_url, headers=headers, json=data)
