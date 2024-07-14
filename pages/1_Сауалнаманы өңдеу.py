@@ -49,6 +49,9 @@ def save_questions(questions, github_api_url, github_token):
     response = requests.put(github_api_url, headers=headers, json=data)
     response.raise_for_status()
 
+# Load existing questions
+questions_with_options = load_questions(QUESTIONS_FILE_URL)
+
 # Function to add a new question
 def add_question():
     new_question = {
@@ -96,13 +99,19 @@ def add_option():
 
 # Function to show all questions
 def show_all_questions():
-    st.session_state['show_questions'] = True
     st.session_state['questions_with_options'] = load_questions(QUESTIONS_FILE_URL)
+    st.session_state['show_questions'] = True
     st.experimental_rerun()
 
 # Clear form if needed
 if st.session_state['clear_form']:
     clear_form()
+
+# Load existing questions if not already loaded
+if 'questions_with_options' not in st.session_state:
+    st.session_state['questions_with_options'] = load_questions(QUESTIONS_FILE_URL)
+
+questions_with_options = st.session_state['questions_with_options']
 
 # Streamlit form for adding questions
 if not st.session_state['show_questions']:
@@ -142,7 +151,6 @@ if not st.session_state['show_questions']:
 
 # Display all questions
 else:
-    questions_with_options = load_questions(QUESTIONS_FILE_URL)
     st.subheader("Барлық сұрақтар")
     for q in questions_with_options:
         st.write(f"Сұрақ: {q['question']}")
