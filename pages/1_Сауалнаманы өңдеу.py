@@ -46,12 +46,13 @@ def add_question():
     save_questions(questions_with_options, "local_questions.json")
     st.success("Сұрақ қосылды!")
     time.sleep(2)
-    clear_form()
+    st.session_state['clear_form'] = True
 
 def clear_form():
     st.session_state['question_text'] = ""
     st.session_state['answer_options'] = []
     st.session_state['new_option'] = ""
+    st.session_state['clear_form'] = False
 
 # Initialize session state for answer options and question text
 if 'answer_options' not in st.session_state:
@@ -69,6 +70,9 @@ if 'question_type' not in st.session_state:
 if 'show_questions' not in st.session_state:
     st.session_state['show_questions'] = False
 
+if 'clear_form' not in st.session_state:
+    st.session_state['clear_form'] = False
+
 # Function to add an option
 def add_option():
     if st.session_state['new_option']:
@@ -79,6 +83,10 @@ def add_option():
 def show_all_questions():
     st.session_state['show_questions'] = True
     st.experimental_rerun()
+
+# Clear form if needed
+if st.session_state['clear_form']:
+    clear_form()
 
 # Streamlit form for adding questions
 if not st.session_state['show_questions']:
