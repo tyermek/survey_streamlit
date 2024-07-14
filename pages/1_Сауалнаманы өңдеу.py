@@ -42,9 +42,13 @@ def save_questions(questions, github_api_url, github_token):
     response.raise_for_status()
     sha = response.json()["sha"]
 
+    # Pretty-print JSON
+    pretty_questions = json.dumps(questions, ensure_ascii=False, indent=4)
+    encoded_content = base64.b64encode(pretty_questions.encode('utf-8')).decode('utf-8')
+
     data = {
         "message": "Update questions",
-        "content": base64.b64encode(json.dumps(questions).encode("utf-8")).decode("utf-8"),  # Encode content to base64
+        "content": encoded_content,
         "sha": sha
     }
     response = requests.put(github_api_url, headers=headers, json=data)
