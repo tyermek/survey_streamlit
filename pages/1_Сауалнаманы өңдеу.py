@@ -2,7 +2,6 @@ import time
 import streamlit as st
 import json
 import requests
-import base64
 
 # Set page configuration
 st.set_page_config(page_title="Сауалнаманы өңдеу", page_icon="📊")
@@ -42,13 +41,9 @@ def save_questions(questions, github_api_url, github_token):
     response.raise_for_status()
     sha = response.json()["sha"]
 
-    # Pretty-print JSON
-    pretty_questions = json.dumps(questions, ensure_ascii=False, indent=4)
-    encoded_content = base64.b64encode(pretty_questions.encode('utf-8')).decode('utf-8')
-
     data = {
         "message": "Update questions",
-        "content": encoded_content,
+        "content": json.dumps(questions, ensure_ascii=False, indent=4),  # Pretty-print JSON
         "sha": sha
     }
     response = requests.put(github_api_url, headers=headers, json=data)
