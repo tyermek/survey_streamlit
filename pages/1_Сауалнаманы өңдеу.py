@@ -69,7 +69,7 @@ if 'clear_form' not in st.session_state:
     st.session_state['clear_form'] = False
 
 if 'questions_with_options' not in st.session_state:
-    st.session_state['questions_with_options'] = load_questions(QUESTIONS_FILE_URL)
+    st.session_state['questions_with_options'] = []
 
 # Function to add an option
 def add_option():
@@ -107,8 +107,6 @@ def show_all_questions():
 if st.session_state['clear_form']:
     clear_form()
 
-questions_with_options = st.session_state['questions_with_options']
-
 # Streamlit form for adding questions
 if not st.session_state['show_questions']:
     st.subheader("Жаңа сұрақ қосу")
@@ -144,7 +142,7 @@ if not st.session_state['show_questions']:
 # Display all questions
 else:
     st.subheader("Барлық сұрақтар")
-    for q in questions_with_options:
+    for q in st.session_state['questions_with_options']:
         st.write(f"Сұрақ: {q['question']}")
         for idx, option in enumerate(q['options']):
             st.write(f"{idx + 1}. {option}")
