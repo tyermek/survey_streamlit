@@ -1,7 +1,6 @@
 import time
 import streamlit as st
 import json
-import os
 import requests
 import base64
 
@@ -43,8 +42,8 @@ def save_questions(questions, github_api_url, github_token):
     response.raise_for_status()
     sha = response.json()["sha"]
 
-    # Encode content to base64
-    content = base64.b64encode(json.dumps(questions).encode()).decode()
+    # Encode content to base64 with pretty print
+    content = base64.b64encode(json.dumps(questions, ensure_ascii=False, indent=4).encode()).decode()
 
     data = {
         "message": "Update questions",
