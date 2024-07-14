@@ -14,23 +14,29 @@ if not st.session_state.get("password_correct", False):
     st.stop()
 
 # File paths
-QUESTIONS_FILE_URL = "https://raw.githubusercontent.com/tyermek/survey_streamlit/main/questions.json"
 QUESTIONS_FILE_PATH = "questions.json"
 GITHUB_REPO = "tyermek/survey_streamlit"
 GITHUB_TOKEN = st.secrets["github"]["token"]
 GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{QUESTIONS_FILE_PATH}"
 
-# Load questions
-def load_questions(file_url):
+# Load questions from GitHub with authentication
+def load_questions(github_api_url, github_token):
+    headers = {
+        "Authorization": f"token {github_token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
     try:
-        response = requests.get(file_url)
+        response = requests.get(github_api_url, headers=headers)
         response.raise_for_status()
-        return response.json()
+        content = response.json()
+        # Decode the base64 content to get the JSON string
+        questions_json = json.loads(content["content"].decode("utf-8"))
+        return questions_json
     except requests.RequestException as e:
         st.error(f"Failed to load questions: {e}")
         return []
 
-# Save questions to GitHub
+# Save questions to GitHub with authentication
 def save_questions(questions, github_api_url, github_token):
     headers = {
         "Authorization": f"token {github_token}",
@@ -96,7 +102,7 @@ def clear_form():
 
 # Function to show all questions
 def show_all_questions():
-    questions_with_options = load_questions(QUESTIONS_FILE_URL)
+    questions_with_options = load_questions(GITHUB_API_URL, GITHUB_TOKEN)
     st.session_state['questions_with_options'] = questions_with_options
     st.session_state['show_questions'] = True
     st.experimental_rerun()
@@ -107,7 +113,7 @@ if st.session_state['clear_form']:
 
 # Load existing questions if not already loaded
 if 'questions_with_options' not in st.session_state:
-    st.session_state['questions_with_options'] = load_questions(QUESTIONS_FILE_URL)
+    st.session_state['questions_with_options'] = load_questions(GITHUB_API_URL, GITHUB_TOKEN)
 
 questions_with_options = st.session_state['questions_with_options']
 
