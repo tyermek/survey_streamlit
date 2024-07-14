@@ -2,6 +2,7 @@ import time
 import streamlit as st
 import json
 import os
+import requests
 
 # Set page configuration
 st.set_page_config(page_title="Сауалнаманы өңдеу", page_icon="📊")
@@ -16,24 +17,23 @@ if not st.session_state.get("password_correct", False):
 # File paths
 QUESTIONS_FILE = "https://raw.githubusercontent.com/tyermek/survey_streamlit/main/questions.json"
 
-
 # Load questions
 def load_questions(file_path):
-    if os.path.exists(file_path):
-        with open(file_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
+    try:
+        response = requests.get(file_path)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        st.error(f"Failed to load questions: {e}")
+        return []
 
 # Save questions
 def save_questions(questions, file_path):
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(questions, f, ensure_ascii=False, indent=4)
 
-
 # Load existing questions
 questions_with_options = load_questions(QUESTIONS_FILE)
-
 
 # Function to add a new question
 def add_question():
@@ -43,16 +43,15 @@ def add_question():
         "type": "RADIO" if st.session_state['question_type'] == "Бір жауабы бар" else "CHECKBOX"
     }
     questions_with_options.append(new_question)
-    save_questions(questions_with_options, QUESTIONS_FILE)
+    # Save questions to a local file instead of the URL (adjust as needed for your use case)
+    save_questions(questions_with_options, "local_questions.json")
     st.success("Сұрақ қосылды!")
     time.sleep(2)
     reset_form()
 
-
 def reset_form():
     st.session_state.clear()
     st.experimental_rerun()
-
 
 # Initialize session state for answer options and question text
 if 'answer_options' not in st.session_state:
@@ -70,19 +69,16 @@ if 'question_type' not in st.session_state:
 if 'show_questions' not in st.session_state:
     st.session_state['show_questions'] = False
 
-
 # Function to add an option
 def add_option():
     if st.session_state['new_option']:
         st.session_state['answer_options'].append(st.session_state['new_option'])
         st.session_state['new_option'] = ""  # Clear the input after adding
 
-
 # Function to show all questions
 def show_all_questions():
     st.session_state['show_questions'] = True
     st.experimental_rerun()
-
 
 # Streamlit form for adding questions
 if not st.session_state['show_questions']:
