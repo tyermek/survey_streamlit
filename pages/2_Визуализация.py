@@ -36,7 +36,7 @@ def get_credentials():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
-            creds = flow.run_local_server(port=0)
+            creds = flow.run_console()  # Use run_console instead of run_local_server
 
         with open(TOKEN_FILE, 'wb') as token:
             pickle.dump(creds, token)
@@ -133,7 +133,7 @@ try:
             filtered_df = df.copy()
             for question, selected_values in filters.items():
                 if selected_values:
-                    filtered_df = filtered_df[filtered_df[question].isin(selected_values)]
+                    filtered_df = filtered_df[question].isin(selected_values)]
 
             # Plot overall statistics
             plot_overall_stats(filtered_df, len(questions_map))
