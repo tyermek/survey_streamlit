@@ -30,12 +30,9 @@ def check_password():
 
     def password_entered():
         """Checks whether a password entered by the user is correct."""
-        if st.session_state["username"] in st.secrets[
-            "passwords"
-        ] and hmac.compare_digest(
-            st.session_state["password"],
-            st.secrets.passwords[st.session_state["username"]],
-        ):
+        if st.session_state["username"] in st.secrets["passwords"] and hmac.compare_digest(
+                st.session_state["password"],
+                st.secrets.passwords[st.session_state["username"]]):
             st.session_state["password_correct"] = True
             del st.session_state["password"]  # Don't store the username or password.
             del st.session_state["username"]
@@ -173,17 +170,26 @@ def commit_survey_link_to_github(form_url, form_id):
 
     # Fetch the current content of the file
     response = requests.get(GITHUB_API_URL, headers=headers)
+    
+    if response.status_code != 200:
+        st.error("Failed to fetch survey links from GitHub.")
+        return
+    
     content = response.json()
     sha = content.get("sha")
 
     # If the content exists, load it, otherwise create a new list
-    if content.get("content"):
-        survey_links = json.loads(base64.b64decode(content["content"]).decode("utf-8"))
-    else:
+    try:
+        if content.get("content"):
+            survey_links = json.loads(base64.b64decode(content["content"]).decode("utf-8"))
+        else:
+            survey_links = []
+    except json.JSONDecodeError as e:
+        st.error(f"Error decoding JSON from GitHub: {e}")
         survey_links = []
 
     # Append the new survey link
-    survey_links.append({"form_id": form_id, "form_url": form_url})
+    survey_links.append({"link_survey": form_url})
 
     data = {
         "message": "Add new survey link",
