@@ -86,7 +86,7 @@ def get_credentials():
             except Exception:
                 os.remove(TOKEN_FILE)  # Delete the token file and re-authenticate
                 creds = None
-        else:
+        if not creds:
             flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
             creds = flow.run_local_server(port=0)
 
@@ -199,7 +199,7 @@ with open("questions_mandatory.json", "r", encoding="utf-8") as f:
     mandatory_questions_with_options = json.load(f)
 
 # Load optional questions from external file
-with open("questions.json", "r", encoding="utf-8") as f):
+with open("questions.json", "r", encoding="utf-8") as f:
     optional_questions_with_options = json.load(f)
 
 # Extract optional questions for processing
