@@ -133,7 +133,7 @@ try:
             filtered_df = df.copy()
             for question, selected_values in filters.items():
                 if selected_values:
-                    filtered_df = filtered_df[question].isin(selected_values)]
+                    filtered_df = filtered_df[filtered_df[question].isin(selected_values)]
 
             # Plot overall statistics
             plot_overall_stats(filtered_df, len(questions_map))
