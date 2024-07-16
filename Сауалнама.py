@@ -29,11 +29,12 @@ def check_password():
 
     def password_entered():
         """Checks whether a password entered by the user is correct."""
-        username = st.session_state["username"]
-        password = st.session_state["password"].encode('utf-8')  # Encode to bytes
-        stored_password = st.secrets.passwords[username].encode('utf-8')  # Encode to bytes
-        
-        if username in st.secrets["passwords"] and hmac.compare_digest(password, stored_password):
+        if st.session_state["username"] in st.secrets[
+            "passwords"
+        ] and hmac.compare_digest(
+            st.session_state["password"],
+            st.secrets.passwords[st.session_state["username"]],
+        ):
             st.session_state["password_correct"] = True
             del st.session_state["password"]  # Don't store the username or password.
             del st.session_state["username"]
@@ -57,7 +58,7 @@ if not check_password():
 st.sidebar.header("Сауалнаманы құру")
 
 # Function to create URL for Google Form
-SCOPES = ["https://www.googleapis.com/auth/forms.body", "https://www.googleapis.com/auth/forms.responses.readonly", "https://www.googleapis.com/auth/drive.metadata.readonly"]
+SCOPES = ["https://www.googleapis.com/auth/forms.body", "https://www.googleapis.com/auth/forms.responses.readonly"]
 DISCOVERY_DOC = "https://forms.googleapis.com/$discovery/rest?version=v1"
 CREDENTIALS_FILE = "client_secrets.json"
 TOKEN_FILE = "token.pickle"
@@ -73,20 +74,13 @@ def find_similar_questions(selected_question, questions, X_pca, top_n=5):
 def get_credentials():
     creds = None
     if os.path.exists(TOKEN_FILE):
-        try:
-            with open(TOKEN_FILE, 'rb') as token:
-                creds = pickle.load(token)
-        except Exception:
-            creds = None
+        with open(TOKEN_FILE, 'rb') as token:
+            creds = pickle.load(token)
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            try:
-                creds.refresh(Request())
-            except Exception:
-                os.remove(TOKEN_FILE)  # Delete the token file and re-authenticate
-                creds = None
-        if not creds:
+            creds.refresh(Request())
+        else:
             flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
             creds = flow.run_local_server(port=0)
 
@@ -172,28 +166,6 @@ def generate_qr_code(url):
     return byte_im
 
 
-def list_google_forms():
-    creds = get_credentials()
-    service = build('drive', 'v3', credentials=creds)
-
-    results = service.files().list(q="mimeType='application/vnd.google-apps.form'", fields="files(id, name, webViewLink)").execute()
-    forms = results.get('files', [])
-
-    form_links = []
-    for form in forms:
-        form_links.append({'name': form['name'], 'link': form['webViewLink']})
-
-    return form_links
-
-
-# Initialize session state attributes if not already present
-if "form_creation_started" not in st.session_state:
-    st.session_state.form_creation_started = False
-if "form_url" not in st.session_state:
-    st.session_state.form_url = None
-if "form_id" not in st.session_state:
-    st.session_state.form_id = None
-
 # Load mandatory questions from external file
 with open("questions_mandatory.json", "r", encoding="utf-8") as f:
     mandatory_questions_with_options = json.load(f)
@@ -215,6 +187,10 @@ X_pca = pca.fit_transform(X.toarray())
 
 # Streamlit app
 st.title("Сұрақтарды таңдау немесе қосу")
+
+# Check if the form creation has started
+if "form_creation_started" not in st.session_state:
+    st.session_state.form_creation_started = False
 
 # Only show the question selection UI if the form creation has not started
 if not st.session_state.form_creation_started:
@@ -272,9 +248,4 @@ if st.session_state.form_creation_started:
         f'<div style="display: flex; justify-content: center;"><img src="data:image/png;base64,{qr_code_base64}" alt="QR Code"></div>',
         unsafe_allow_html=True
     )
-
-    # Display the list of all Google Forms
-    st.write("Барлық Google формалары:")
-    forms = list_google_forms()
-    for form in forms:
-        st.write(f"[{form['name']}]({form['link']})")
+    
