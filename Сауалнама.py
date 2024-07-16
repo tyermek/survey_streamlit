@@ -73,12 +73,19 @@ def find_similar_questions(selected_question, questions, X_pca, top_n=5):
 def get_credentials():
     creds = None
     if os.path.exists(TOKEN_FILE):
-        with open(TOKEN_FILE, 'rb') as token:
-            creds = pickle.load(token)
+        try:
+            with open(TOKEN_FILE, 'rb') as token:
+                creds = pickle.load(token)
+        except Exception:
+            creds = None
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+            try:
+                creds.refresh(Request())
+            except Exception:
+                os.remove(TOKEN_FILE)  # Delete the token file and re-authenticate
+                creds = None
         else:
             flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
             creds = flow.run_local_server(port=0)
