@@ -12,10 +12,11 @@ import qrcode
 import io
 import base64
 import hmac
+import requests
+import time
 
 # Set page configuration at the very top
 st.set_page_config(page_title="Сауалнама", page_icon="📈")
-
 
 def check_password():
     """Returns `True` if the user had a correct password."""
@@ -51,7 +52,6 @@ def check_password():
         st.error("😕 User not known or password incorrect")
     return False
 
-
 if not check_password():
     st.stop()
 
@@ -63,13 +63,11 @@ DISCOVERY_DOC = "https://forms.googleapis.com/$discovery/rest?version=v1"
 CREDENTIALS_FILE = "client_secrets.json"
 TOKEN_FILE = "token.pickle"
 
-
 def find_similar_questions(selected_question, questions, X_pca, top_n=5):
     selected_index = questions.index(selected_question)
     distances = cosine_similarity([X_pca[selected_index]], X_pca)[0]
     similar_indices = distances.argsort()[-top_n - 1:-1][::-1]
     return [questions[i] for i in similar_indices]
-
 
 def get_credentials():
     creds = None
@@ -88,7 +86,6 @@ def get_credentials():
             pickle.dump(creds, token)
 
     return creds
-
 
 def create_question(title, options, index, question_type="RADIO"):
     return {
@@ -109,7 +106,6 @@ def create_question(title, options, index, question_type="RADIO"):
             "location": {"index": index},
         }
     }
-
 
 def create_google_form(mandatory_questions, similar_questions):
     creds = get_credentials()
@@ -147,7 +143,6 @@ def create_google_form(mandatory_questions, similar_questions):
     form_url = service.forms().get(formId=result["formId"]).execute()["responderUri"]
     return form_url, result["formId"]
 
-
 def generate_qr_code(url):
     qr = qrcode.QRCode(
         version=1,
@@ -165,6 +160,40 @@ def generate_qr_code(url):
     byte_im = buf.getvalue()
     return byte_im
 
+def commit_survey_link_to_github(survey_links, sha):
+    GITHUB_REPO = "tyermek/survey_streamlit"
+    GITHUB_FILE_PATH = "survey_links.json"
+    GITHUB_TOKEN = st.secrets["github"]["token"]
+    GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{GITHUB_FILE_PATH}"
+
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+
+    data = {
+        "message": "Add new survey link",
+        "content": base64.b64encode(json.dumps(survey_links, ensure_ascii=False, indent=4).encode('utf-8')).decode('utf-8'),
+        "sha": sha
+    }
+
+    response = requests.put(GITHUB_API_URL, headers=headers, json=data)
+    response.raise_for_status()
+
+def load_survey_links():
+    GITHUB_REPO = "tyermek/survey_streamlit"
+    GITHUB_FILE_PATH = "survey_links.json"
+    GITHUB_TOKEN = st.secrets["github"]["token"]
+    GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{GITHUB_FILE_PATH}"
+
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    response = requests.get(GITHUB_API_URL, headers=headers)
+    content = response.json()
+    survey_links = json.loads(base64.b64decode(content["content"]).decode("utf-8"))
+    return survey_links, content["sha"]
 
 # Load mandatory questions from external file
 with open("questions_mandatory.json", "r", encoding="utf-8") as f:
@@ -230,6 +259,11 @@ if not st.session_state.form_creation_started:
                 form_url, form_id = create_google_form(mandatory_questions_with_options, find_similar_questions(selected_question, optional_questions, X_pca))
             st.session_state.form_url = form_url
             st.session_state.form_id = form_id
+
+            survey_links, sha = load_survey_links()
+            survey_links.append({"form_id": form_id, "form_url": form_url})
+            commit_survey_link_to_github(survey_links, sha)
+
             st.experimental_rerun()
     with col4:
         st.write(
