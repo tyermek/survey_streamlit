@@ -58,7 +58,7 @@ if not check_password():
 st.sidebar.header("Сауалнаманы құру")
 
 # Function to create URL for Google Form
-SCOPES = ["https://www.googleapis.com/auth/forms.body", "https://www.googleapis.com/auth/forms.responses.readonly"]
+SCOPES = ["https://www.googleapis.com/auth/forms.body", "https://www.googleapis.com/auth/forms.responses.readonly", "https://www.googleapis.com/auth/drive.metadata.readonly"]
 DISCOVERY_DOC = "https://forms.googleapis.com/$discovery/rest?version=v1"
 CREDENTIALS_FILE = "client_secrets.json"
 TOKEN_FILE = "token.pickle"
@@ -166,6 +166,20 @@ def generate_qr_code(url):
     return byte_im
 
 
+def list_google_forms():
+    creds = get_credentials()
+    service = build('drive', 'v3', credentials=creds)
+
+    results = service.files().list(q="mimeType='application/vnd.google-apps.form'", fields="files(id, name, webViewLink)").execute()
+    forms = results.get('files', [])
+
+    form_links = []
+    for form in forms:
+        form_links.append({'name': form['name'], 'link': form['webViewLink']})
+
+    return form_links
+
+
 # Load mandatory questions from external file
 with open("questions_mandatory.json", "r", encoding="utf-8") as f:
     mandatory_questions_with_options = json.load(f)
@@ -248,3 +262,9 @@ if st.session_state.form_creation_started:
         f'<div style="display: flex; justify-content: center;"><img src="data:image/png;base64,{qr_code_base64}" alt="QR Code"></div>',
         unsafe_allow_html=True
     )
+
+    # Display the list of all Google Forms
+    st.write("Барлық Google формалары:")
+    forms = list_google_forms()
+    for form in forms:
+        st.write(f"[{form['name']}]({form['link']})")
