@@ -199,7 +199,7 @@ with open("questions_mandatory.json", "r", encoding="utf-8") as f:
     mandatory_questions_with_options = json.load(f)
 
 # Load optional questions from external file
-with open("questions.json", "r", encoding="utf-8") as f:
+with open("questions.json", "r", encoding="utf-8") as f):
     optional_questions_with_options = json.load(f)
 
 # Extract optional questions for processing
