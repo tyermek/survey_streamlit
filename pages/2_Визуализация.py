@@ -22,7 +22,7 @@ parent_directory = os.path.abspath(os.path.join(current_directory, os.pardir))
 
 # Construct the full paths to the necessary files in the parent directory
 CREDENTIALS_FILE = os.path.join(parent_directory, "client_secrets.json")
-TOKEN_FILE = "../token.pickle"
+TOKEN_FILE = os.path.join(parent_directory, "token.pickle")
 
 
 def get_credentials():
