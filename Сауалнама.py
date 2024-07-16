@@ -29,12 +29,11 @@ def check_password():
 
     def password_entered():
         """Checks whether a password entered by the user is correct."""
-        if st.session_state["username"] in st.secrets[
-            "passwords"
-        ] and hmac.compare_digest(
-            st.session_state["password"],
-            st.secrets.passwords[st.session_state["username"]],
-        ):
+        username = st.session_state["username"]
+        password = st.session_state["password"].encode('utf-8')  # Encode to bytes
+        stored_password = st.secrets.passwords[username].encode('utf-8')  # Encode to bytes
+        
+        if username in st.secrets["passwords"] and hmac.compare_digest(password, stored_password):
             st.session_state["password_correct"] = True
             del st.session_state["password"]  # Don't store the username or password.
             del st.session_state["username"]
