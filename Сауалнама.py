@@ -160,7 +160,7 @@ def generate_qr_code(url):
     byte_im = buf.getvalue()
     return byte_im
 
-def commit_survey_link_to_github(survey_links, sha):
+def commit_survey_link_to_github(form_url, form_id):
     GITHUB_REPO = "tyermek/survey_streamlit"
     GITHUB_FILE_PATH = "survey_links.json"
     GITHUB_TOKEN = st.secrets["github"]["token"]
@@ -170,6 +170,20 @@ def commit_survey_link_to_github(survey_links, sha):
         "Authorization": f"token {GITHUB_TOKEN}",
         "Accept": "application/vnd.github.v3+json"
     }
+
+    # Fetch the current content of the file
+    response = requests.get(GITHUB_API_URL, headers=headers)
+    content = response.json()
+    sha = content.get("sha")
+
+    # If the content exists, load it, otherwise create a new list
+    if content.get("content"):
+        survey_links = json.loads(base64.b64decode(content["content"]).decode("utf-8"))
+    else:
+        survey_links = []
+
+    # Append the new survey link
+    survey_links.append({"form_id": form_id, "form_url": form_url})
 
     data = {
         "message": "Add new survey link",
@@ -179,27 +193,6 @@ def commit_survey_link_to_github(survey_links, sha):
 
     response = requests.put(GITHUB_API_URL, headers=headers, json=data)
     response.raise_for_status()
-
-def load_survey_links():
-    GITHUB_REPO = "tyermek/survey_streamlit"
-    GITHUB_FILE_PATH = "survey_links.json"
-    GITHUB_TOKEN = st.secrets["github"]["token"]
-    GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{GITHUB_FILE_PATH}"
-
-    headers = {
-        "Authorization": f"token {GITHUB_TOKEN}",
-        "Accept": "application/vnd.github.v3+json"
-    }
-    response = requests.get(GITHUB_API_URL, headers=headers)
-    content = response.json()
-
-    # Check if the content is empty or invalid
-    if content["content"].strip():
-        survey_links = json.loads(base64.b64decode(content["content"]).decode("utf-8"))
-    else:
-        survey_links = []
-
-    return survey_links, content["sha"]
 
 # Load mandatory questions from external file
 with open("questions_mandatory.json", "r", encoding="utf-8") as f:
@@ -266,9 +259,7 @@ if not st.session_state.form_creation_started:
             st.session_state.form_url = form_url
             st.session_state.form_id = form_id
 
-            survey_links, sha = load_survey_links()
-            survey_links.append({"form_id": form_id, "form_url": form_url})
-            commit_survey_link_to_github(survey_links, sha)
+            commit_survey_link_to_github(form_url, form_id)
 
             st.experimental_rerun()
     with col4:
