@@ -43,7 +43,7 @@ for question, alias in question_aliases.items():
 filtered_df = df.copy()
 for question, selected_values in filters.items():
     if selected_values:
-        filtered_df = filtered_df[filtered_df[question].isin(selected_values)]
+        filtered_df = filtered_df[question].isin(selected_values)]
 
 # Plot overall statistics
 def plot_overall_stats(df):
@@ -53,45 +53,46 @@ def plot_overall_stats(df):
     col2.metric("Сұрақтар саны", len(df.columns) - 2)  # Subtract 2 for Response ID and Submitted at
 
 # Plot responses based on user selection
-def plot_responses(df, plot_type):
-    if plot_type == "Үйде жұмыс орнының қолжетімділігі":
-        st.markdown("### Үйде жұмыс орнының қолжетімділігі")
-        fig = px.pie(df,
-                     names="Қашықтықтан оқыту кезінде сабақтарды орындау үшін Сіздің үйде жұмыс орны бар ма? ",
-                     title="Cабақтарды орындау үшін Сіздің үйде жұмыс орны бар ма?")
-        st.plotly_chart(fig)
-    elif plot_type == "Компьютерде күніне қанша сағат отырасыз?":
-        fig = px.bar(df,
-                     x="16.	Компьютерде күніне қанша сағат отырасыз? / Сколько часов в день Вы сидите за компьютером?",
-                     title="Компьютерде күніне қанша сағат отырасыз?")
-        fig.update_layout(xaxis_tickangle=-45)
-        st.plotly_chart(fig)
-    elif plot_type == "Сізге онлайн сабақтарға қатысу ыңғайлы ма?":
-        fig = px.bar(df,
-                     x="15.	Үй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма? / Удобно ли Вам в домашних условиях участвовать в онлайн уроках? ",
-                     title="Сізге онлайн сабақтарға қатысу ыңғайлы ма?")
-        fig.update_layout(xaxis_tickangle=-45)
-        st.plotly_chart(fig)
-    elif plot_type == "Компьютер немесе гаджет салдарынан отбасы мүшелерімен жанжал туындайды ма?":
-        fig = px.pie(df,
-                     names="27.	Компьютер немесе гаджет салдарынан отбасы мүшелерімен жанжал туындайды ма? / Возникают ли ссоры с членами семьи из-за компьютера или гаджета?",
-                     title="Компьютер немесе гаджет салдарынан отбасы мүшелерімен жанжал туындайды ма?")
-        st.plotly_chart(fig)
-    elif plot_type == "Мұғалімнің тапсырмаларын қалай жиі орындайсыз?":
-        fig = px.pie(df,
-                     names="10.	Мұғалімнің тапсырмаларын қалай жиі орындайсыз? / Как часто Вы выполняете задания учителя?",
-                     title="Мұғалімнің тапсырмаларын қалай жиі орындайсыз?")
-        st.plotly_chart(fig)
-    elif plot_type == "Сіз қашықтықтан оқыту кезінде белсенді бола алдыңыз ба?":
-        fig = px.bar(df,
-                     x="13.	Сіз қалай ойлайсыз, сіз қашықтықтан оқыту кезінде белсенді бола алдыңыз ба? / Как вы считате, Вы стали активнее при дистанционном обучении?",
-                     title="Сіз қашықтықтан оқыту кезінде белсенді бола алдыңыз ба?")
-        fig.update_layout(xaxis_tickangle=-45)
-        st.plotly_chart(fig)
+def plot_responses(df, plot_types):
+    for plot_type in plot_types:
+        if plot_type == "Үйде жұмыс орнының қолжетімділігі":
+            st.markdown("### Үйде жұмыс орнының қолжетімділігі")
+            fig = px.pie(df,
+                         names="Қашықтықтан оқыту кезінде сабақтарды орындау үшін Сіздің үйде жұмыс орны бар ма? ",
+                         title="Cабақтарды орындау үшін Сіздің үйде жұмыс орны бар ма?")
+            st.plotly_chart(fig)
+        elif plot_type == "Компьютерде күніне қанша сағат отырасыз?":
+            fig = px.bar(df,
+                         x="16.	Компьютерде күніне қанша сағат отырасыз? / Сколько часов в день Вы сидите за компьютером?",
+                         title="Компьютерде күніне қанша сағат отырасыз?")
+            fig.update_layout(xaxis_tickangle=-45)
+            st.plotly_chart(fig)
+        elif plot_type == "Сізге онлайн сабақтарға қатысу ыңғайлы ма?":
+            fig = px.bar(df,
+                         x="15.	Үй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма? / Удобно ли Вам в домашних условиях участвовать в онлайн уроках? ",
+                         title="Сізге онлайн сабақтарға қатысу ыңғайлы ма?")
+            fig.update_layout(xaxis_tickangle=-45)
+            st.plotly_chart(fig)
+        elif plot_type == "Компьютер немесе гаджет салдарынан отбасы мүшелерімен жанжал туындайды ма?":
+            fig = px.pie(df,
+                         names="27.	Компьютер немесе гаджет салдарынан отбасы мүшелерімен жанжал туындайды ма? / Возникают ли ссоры с членами семьи из-за компьютера или гаджета?",
+                         title="Компьютер немесе гаджет салдарынан отбасы мүшелерімен жанжал туындайды ма?")
+            st.plotly_chart(fig)
+        elif plot_type == "Мұғалімнің тапсырмаларын қалай жиі орындайсыз?":
+            fig = px.pie(df,
+                         names="10.	Мұғалімнің тапсырмаларын қалай жиі орындайсыз? / Как часто Вы выполняете задания учителя?",
+                         title="Мұғалімнің тапсырмаларын қалай жиі орындайсыз?")
+            st.plotly_chart(fig)
+        elif plot_type == "Сіз қашықтықтан оқыту кезінде белсенді бола алдыңыз ба?":
+            fig = px.bar(df,
+                         x="13.	Сіз қалай ойлайсыз, сіз қашықтықтан оқыту кезінде белсенді бола алдыңыз ба? / Как вы считате, Вы стали активнее при дистанционном обучении?",
+                         title="Сіз қашықтықтан оқыту кезінде белсенді бола алдыңыз ба?")
+            fig.update_layout(xaxis_tickangle=-45)
+            st.plotly_chart(fig)
 
-# Dropdown for selecting the type of plot
-plot_type = st.selectbox(
-    "Қандай графикті көрсету керек?",
+# Multiselect for selecting the type of plots
+plot_types = st.multiselect(
+    "Қандай графиктерді көрсету керек?",
     ["Үйде жұмыс орнының қолжетімділігі", 
      "Компьютерде күніне қанша сағат отырасыз?", 
      "Сізге онлайн сабақтарға қатысу ыңғайлы ма?", 
@@ -103,6 +104,6 @@ plot_type = st.selectbox(
 # Display statistics and visualizations
 plot_overall_stats(filtered_df)
 if not filtered_df.empty:
-    plot_responses(filtered_df, plot_type)
+    plot_responses(filtered_df, plot_types)
 else:
     st.warning("Фильтрлерге сәйкес келетін жауаптар жоқ.")
