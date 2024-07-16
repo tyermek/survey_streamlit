@@ -192,7 +192,13 @@ def load_survey_links():
     }
     response = requests.get(GITHUB_API_URL, headers=headers)
     content = response.json()
-    survey_links = json.loads(base64.b64decode(content["content"]).decode("utf-8"))
+
+    # Check if the content is empty or invalid
+    if content["content"].strip():
+        survey_links = json.loads(base64.b64decode(content["content"]).decode("utf-8"))
+    else:
+        survey_links = []
+
     return survey_links, content["sha"]
 
 # Load mandatory questions from external file
