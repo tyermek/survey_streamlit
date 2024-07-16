@@ -180,6 +180,14 @@ def list_google_forms():
     return form_links
 
 
+# Initialize session state attributes if not already present
+if "form_creation_started" not in st.session_state:
+    st.session_state.form_creation_started = False
+if "form_url" not in st.session_state:
+    st.session_state.form_url = None
+if "form_id" not in st.session_state:
+    st.session_state.form_id = None
+
 # Load mandatory questions from external file
 with open("questions_mandatory.json", "r", encoding="utf-8") as f:
     mandatory_questions_with_options = json.load(f)
@@ -201,10 +209,6 @@ X_pca = pca.fit_transform(X.toarray())
 
 # Streamlit app
 st.title("Сұрақтарды таңдау немесе қосу")
-
-# Check if the form creation has started
-if "form_creation_started" not in st.session_state:
-    st.session_state.form_creation_started = False
 
 # Only show the question selection UI if the form creation has not started
 if not st.session_state.form_creation_started:
