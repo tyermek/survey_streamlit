@@ -41,10 +41,10 @@ def load_survey_links():
 survey_links = load_survey_links()
 
 # Display survey links
-st.title("Survey History")
+st.title("Тарихи сауалнамалар")
 
 if survey_links:
-    st.subheader("Survey Links")
+    st.subheader("Сауалнама сілтемелері:")
     for link in survey_links:
         st.write(f"- [{link['link_survey']}]({link['link_survey']})")
 else:
