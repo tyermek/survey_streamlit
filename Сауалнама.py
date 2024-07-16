@@ -12,11 +12,10 @@ import qrcode
 import io
 import base64
 import hmac
-import requests
-import time
 
 # Set page configuration at the very top
 st.set_page_config(page_title="Сауалнама", page_icon="📈")
+
 
 def check_password():
     """Returns `True` if the user had a correct password."""
@@ -229,7 +228,6 @@ if not st.session_state.form_creation_started:
             st.session_state.form_creation_started = True
             with st.spinner("Сауалнама құрылуда..."):
                 form_url, form_id = create_google_form(mandatory_questions_with_options, find_similar_questions(selected_question, optional_questions, X_pca))
-                save_survey_link(form_url, form_id)
             st.session_state.form_url = form_url
             st.session_state.form_id = form_id
             st.experimental_rerun()
@@ -250,35 +248,3 @@ if st.session_state.form_creation_started:
         f'<div style="display: flex; justify-content: center;"><img src="data:image/png;base64,{qr_code_base64}" alt="QR Code"></div>',
         unsafe_allow_html=True
     )
-
-def save_survey_link(url, form_id):
-    # GitHub repository details
-    GITHUB_REPO = "tyermek/survey_streamlit"
-    GITHUB_TOKEN = st.secrets["github"]["token"]
-    FILE_PATH = "survey_links.json"
-    GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{FILE_PATH}"
-    
-    headers = {
-        "Authorization": f"token {GITHUB_TOKEN}",
-        "Accept": "application/vnd.github.v3+json"
-    }
-    
-    # Load the current content of the survey links file
-    response = requests.get(GITHUB_API_URL, headers=headers)
-    response.raise_for_status()
-    content = response.json()
-    links_json = json.loads(base64.b64decode(content["content"]).decode("utf-8"))
-    sha = content["sha"]
-    
-    # Append the new survey link
-    links_json.append({"url": url, "form_id": form_id})
-    
-    # Save the updated content back to the repository
-    data = {
-        "message": "Add new survey link",
-        "content": base64.b64encode(json.dumps(links_json, ensure_ascii=False, indent=4).encode('utf-8')).decode('utf-8'),
-        "sha": sha
-    }
-    response = requests.put(GITHUB_API_URL, headers=headers, json=data)
-    response.raise_for_status()
-
