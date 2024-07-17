@@ -28,7 +28,7 @@ df.columns = df.columns.str.replace('\t', ' ').str.replace('\\', '')
 df.columns = df.columns.str.split('/ ').str[0].str.strip()
 for col in df.columns:
     df[col] = df[col].astype(str).str.split('/ ').str[0].str.strip()
-
+st.write(df.columns)
 # Define aliases for specific columns
 question_aliases = {
     "Өзіңіздің аймағыңызды таңдаңыз:": "Аймақ",
