@@ -23,9 +23,6 @@ df = load_data()
 # Replace 'Нұр-Сұлтан қ.' with 'Астана қ.'
 df.replace('Нұр-Сұлтан қ.', 'Астана қ.', inplace=True)
 
-# Print column names to verify
-st.write("Columns in the dataset:", df.columns.tolist())
-
 # Remove everything after "/" in the responses
 for col in df.columns:
     df[col] = df[col].astype(str).str.split('/ ').str[0].str.strip()
