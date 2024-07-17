@@ -19,6 +19,8 @@ def load_data():
 
 # Load the data
 df = load_data()
+# Replace 'Нұр-Сұлтан қ.' with 'Астана қ.'
+df.replace('Нұр-Сұлтан қ.', 'Астана қ.', inplace=True)
 
 # Remove everything after "/" in the responses
 for col in df.columns:
