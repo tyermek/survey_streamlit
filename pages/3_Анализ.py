@@ -17,18 +17,15 @@ df = load_data()
 
 # Replace 'Нұр-Сұлтан қ.' with 'Астана қ.'
 df.replace('Нұр-Сұлтан қ.', 'Астана қ.', inplace=True)
-
 # Strip any hidden characters in column names
 df.columns = df.columns.str.strip()
-
 # Replace any problematic characters in the column names
 df.columns = df.columns.str.replace('\t', ' ').str.replace('\\', '')
-
 # Remove everything after "/" in the column names and values
 df.columns = df.columns.str.split('/ ').str[0].str.strip()
 for col in df.columns:
     df[col] = df[col].astype(str).str.split('/ ').str[0].str.strip()
-st.write(df.columns)
+
 # Define aliases for specific columns
 question_aliases = {
     "Өзіңіздің аймағыңызды таңдаңыз:": "Аймақ",
