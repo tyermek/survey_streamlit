@@ -102,12 +102,12 @@ def plot_responses(df, plot_types):
             table_data3.columns = ["Жауап", "Саны"]
             st.write(table_data3)
             
-            st.markdown("### Сізге қалай сабақ оқу ыңғайлы?")
+            st.markdown("### Сізге онлайн сабақтарға қатысу ыңғайлы ма? / Сізге қалай сабақ оқу ыңғайлы?")
             fig4 = px.bar(df,
                           x="15. Үй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма?",
                           color="22. Сізге қалай сабақ оқу ыңғайлы?",
                           barmode='group',
-                          title="Сізге қалай сабақ оқу ыңғайлы?")
+                          title="Сізге онлайн сабақтарға қатысу ыңғайлы ма? / Сізге қалай сабақ оқу ыңғайлы?")
             fig4.update_layout(xaxis_tickangle=-45, width=1000, height=600, legend=dict(x=1, y=0.5))
             st.plotly_chart(fig4, use_container_width=True)
             table_data4 = df.groupby(["15. Үй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма?", "22. Сізге қалай сабақ оқу ыңғайлы?"]).size().reset_index(name='Саны')
