@@ -19,6 +19,7 @@ def load_data():
 
 # Load the data
 df = load_data()
+
 # Replace 'Нұр-Сұлтан қ.' with 'Астана қ.'
 df.replace('Нұр-Сұлтан қ.', 'Астана қ.', inplace=True)
 
@@ -45,7 +46,7 @@ for question, alias in question_aliases.items():
 filtered_df = df.copy()
 for question, selected_values in filters.items():
     if selected_values:
-        filtered_df = filtered_df[filtered_df[question].isin(selected_values)]
+        filtered_df = filtered_df[question].isin(selected_values)]
 
 # Plot overall statistics
 def plot_overall_stats(df):
@@ -67,14 +68,25 @@ def plot_responses(df, plot_types):
             table_data.columns = ["Жауап", "Саны"]
             st.write(table_data)
         elif plot_type == "Компьютерде күніне қанша сағат отырасыз?":
-            fig = px.bar(df,
-                         x="16.\tКомпьютерде күніне қанша сағат отырасыз? / Сколько часов в день Вы сидите за компьютером?",
-                         title="Компьютерде күніне қанша сағат отырасыз?")
-            fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig)
-            table_data = df["16.\tКомпьютерде күніне қанша сағат отырасыз? / Сколько часов в день Вы сидите за компьютером?"].value_counts().reset_index()
-            table_data.columns = ["Жауап", "Саны"]
-            st.write(table_data)
+            st.markdown("### Компьютерде күніне қанша сағат отырасыз?")
+            fig1 = px.bar(df,
+                          x="16.\tКомпьютерде күніне қанша сағат отырасыз? / Сколько часов в день Вы сидите за компьютером?",
+                          title="Компьютерде күніне қанша сағат отырасыз?")
+            fig1.update_layout(xaxis_tickangle=-45)
+            st.plotly_chart(fig1)
+            table_data1 = df["16.\tКомпьютерде күніне қанша сағат отырасыз? / Сколько часов в день Вы сидите за компьютером?"].value_counts().reset_index()
+            table_data1.columns = ["Жауап", "Саны"]
+            st.write(table_data1)
+            
+            st.markdown("### Қашықтықтан оқыту кезінде гимнастикалық жаттығуды Сіз күніне неше рет жасайсыз?")
+            fig2 = px.bar(df,
+                          x="Қашықтықтан оқыту кезінде гимнастикалық жаттығуды Сіз күніне неше рет жасайсыз? / Сколько раз в день Вы делаете гимнастические упражнения во время дистанционного обучения?",
+                          title="Қашықтықтан оқыту кезінде гимнастикалық жаттығуды Сіз күніне неше рет жасайсыз?")
+            fig2.update_layout(xaxis_tickangle=-45)
+            st.plotly_chart(fig2)
+            table_data2 = df["Қашықтықтан оқыту кезінде гимнастикалық жаттығуды Сіз күніне неше рет жасайсыз? / Сколько раз в день Вы делаете гимнастические упражнения во время дистанционного обучения?"].value_counts().reset_index()
+            table_data2.columns = ["Жауап", "Саны"]
+            st.write(table_data2)
         elif plot_type == "Сізге онлайн сабақтарға қатысу ыңғайлы ма?":
             fig = px.bar(df,
                          x="15.\tҮй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма? / Удобно ли Вам в домашних условиях участвовать в онлайн уроках? ",
