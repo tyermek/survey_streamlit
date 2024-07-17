@@ -17,10 +17,13 @@ df = load_data()
 
 # Replace 'Нұр-Сұлтан қ.' with 'Астана қ.'
 df.replace('Нұр-Сұлтан қ.', 'Астана қ.', inplace=True)
+
 # Strip any hidden characters in column names
 df.columns = df.columns.str.strip()
+
 # Replace any problematic characters in the column names
 df.columns = df.columns.str.replace('\t', ' ').str.replace('\\', '')
+
 # Remove everything after "/" in the column names and values
 df.columns = df.columns.str.split('/ ').str[0].str.strip()
 for col in df.columns:
@@ -31,7 +34,7 @@ question_aliases = {
     "Өзіңіздің аймағыңызды таңдаңыз:": "Аймақ",
     "Сіз қандай мектепте оқисыз?": "Мектеп",
     "4. Мектептегі оқыту тілін белгілеңіз": "Оқыту тілі",
-    "Өз статусыңызды көрсетіңіз:": "Статус"
+    "Өз статусыңызды көрсетіңіз: ": "Статус"
 }
 
 # Display filter options for the specified questions using their aliases
@@ -89,14 +92,26 @@ def plot_responses(df, plot_types):
             table_data2 = df.groupby(["16. Компьютерде күніне қанша сағат отырасыз?", "18. Қашықтықтан оқыту кезінде гимнастикалық жаттығуды Сіз күніне неше рет жасайсыз?"]).size().reset_index(name='Саны')
             st.write(table_data2)
         elif plot_type == "Сізге онлайн сабақтарға қатысу ыңғайлы ма?":
-            fig = px.bar(df,
-                         x="15. Үй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма?",
-                         title="Сізге онлайн сабақтарға қатысу ыңғайлы ма?")
-            fig.update_layout(xaxis_tickangle=-45, width=1000, height=600, legend=dict(x=1, y=0.5))
-            st.plotly_chart(fig, use_container_width=True)
-            table_data = df["15. Үй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма?"].value_counts().reset_index()
-            table_data.columns = ["Жауап", "Саны"]
-            st.write(table_data)
+            st.markdown("### Сізге онлайн сабақтарға қатысу ыңғайлы ма?")
+            fig3 = px.bar(df,
+                          x="15. Үй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма?",
+                          title="Сізге онлайн сабақтарға қатысу ыңғайлы ма?")
+            fig3.update_layout(xaxis_tickangle=-45, width=1000, height=600, legend=dict(x=1, y=0.5))
+            st.plotly_chart(fig3, use_container_width=True)
+            table_data3 = df["15. Үй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма?"].value_counts().reset_index()
+            table_data3.columns = ["Жауап", "Саны"]
+            st.write(table_data3)
+            
+            st.markdown("### Сізге қалай сабақ оқу ыңғайлы?")
+            fig4 = px.bar(df,
+                          x="15. Үй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма?",
+                          color="19. Сізге қалай сабақ оқу ыңғайлы?",
+                          barmode='group',
+                          title="Сізге қалай сабақ оқу ыңғайлы?")
+            fig4.update_layout(xaxis_tickangle=-45, width=1000, height=600, legend=dict(x=1, y=0.5))
+            st.plotly_chart(fig4, use_container_width=True)
+            table_data4 = df.groupby(["15. Үй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма?", "19. Сізге қалай сабақ оқу ыңғайлы?"]).size().reset_index(name='Саны')
+            st.write(table_data4)
         elif plot_type == "Компьютер немесе гаджет салдарынан отбасы мүшелерімен жанжал туындайды ма?":
             fig = px.pie(df,
                          names="27. Компьютер немесе гаджет салдарынан отбасы мүшелерімен жанжал туындайды ма?",
