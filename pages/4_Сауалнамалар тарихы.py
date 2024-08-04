@@ -41,7 +41,7 @@ def load_survey_links():
 survey_links = load_survey_links()
 
 # Display survey links
-st.title("Тарихи сауалнамалар")
+st.title("Сауалнамалар тарихы")
 
 if survey_links:
     st.subheader("Сауалнама сілтемелері:")
