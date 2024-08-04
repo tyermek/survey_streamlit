@@ -68,7 +68,7 @@ def plot_responses(df, plot_types):
             fig.update_layout(width=900, height=500, legend=dict(x=1, y=0.5))
             st.plotly_chart(fig, use_container_width=True)
             table_data = df["Қашықтықтан оқыту кезінде сабақтарды орындау үшін Сіздің үйде жұмыс орны бар ма?"].value_counts().reset_index()
-            table_data.columns = ["Жауап", "Саны"]
+            table_data.columns = ["Жауап", "Cабақтарды орындау үшін Сіздің үйде жұмыс орны бар ма?"]
             st.write(table_data.set_index('Жауап').T)
         elif plot_type == "Компьютерде күніне қанша сағат отырасыз?":
             st.markdown("### Компьютерде күніне қанша сағат отырасыз?")
