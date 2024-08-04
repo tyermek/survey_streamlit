@@ -51,9 +51,13 @@ if survey_links:
     df = pd.DataFrame(survey_links)
     df.index += 1  # Start index from 1 for numeration
     df.reset_index(inplace=True)
-    df.columns = ["№", "Сілтеме", "Сауалнама құрылған дата"]
+    df.columns = ["№", "link_survey", "Сауалнама құрылған дата"]
+    
+    # Make links clickable
+    df["Сілтеме"] = df["link_survey"].apply(lambda x: f"[{x}]({x})")
+    df.drop(columns=["link_survey"], inplace=True)
 
-    # Display the DataFrame as a table
-    st.table(df)
+    # Display the DataFrame as a markdown table to make links clickable
+    st.markdown(df.to_markdown(index=False), unsafe_allow_html=True)
 else:
     st.write("No survey links found.")
