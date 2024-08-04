@@ -53,13 +53,7 @@ def check_password():
 if not check_password():
     st.stop()
 
-st.sidebar.header("Сауалнаманы құру")
-
-# Function to create URL for Google Form
-SCOPES = ["https://www.googleapis.com/auth/forms.body", "https://www.googleapis.com/auth/forms.responses.readonly"]
-DISCOVERY_DOC = "https://forms.googleapis.com/$discovery/rest?version=v1"
-CREDENTIALS_FILE = "client_secrets.json"
-TOKEN_FILE = "token.pickle"
+st.sidebar.header("Платформа туралы")
 
 # Streamlit app
 st.title("Сауалнама платформасына қош келдіңіз!")
