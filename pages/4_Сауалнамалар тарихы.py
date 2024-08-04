@@ -51,7 +51,7 @@ if survey_links:
     df = pd.DataFrame(survey_links)
     df.index += 1  # Start index from 1 for numeration
     df.reset_index(inplace=True)
-    df.columns = ["№", "link_survey", "create_date"]
+    df.columns = ["№", "Сілтеме", "Сауалнама құрылған дата"]
 
     # Display the DataFrame as a table
     st.table(df)
