@@ -65,7 +65,7 @@ def plot_responses(df, plot_types):
             fig = px.pie(df,
                          names="Қашықтықтан оқыту кезінде сабақтарды орындау үшін Сіздің үйде жұмыс орны бар ма?",
                          title="Cабақтарды орындау үшін Сіздің үйде жұмыс орны бар ма?")
-            fig.update_layout(width=1000, height=600, legend=dict(x=1, y=0.5))
+            fig.update_layout(width=800, height=400, legend=dict(x=1, y=0.5))
             st.plotly_chart(fig, use_container_width=True)
             table_data = df["Қашықтықтан оқыту кезінде сабақтарды орындау үшін Сіздің үйде жұмыс орны бар ма?"].value_counts().reset_index()
             table_data.columns = ["Жауап", "Саны"]
@@ -75,7 +75,7 @@ def plot_responses(df, plot_types):
             fig1 = px.bar(df,
                           x="16. Компьютерде күніне қанша сағат отырасыз?",
                           title="Компьютерде күніне қанша сағат отырасыз?")
-            fig1.update_layout(xaxis_tickangle=-45, width=1000, height=600, legend=dict(x=1, y=0.5))
+            fig1.update_layout(xaxis_tickangle=-45, width=800, height=400, legend=dict(x=1, y=0.5))
             st.plotly_chart(fig1, use_container_width=True)
             table_data1 = df["16. Компьютерде күніне қанша сағат отырасыз?"].value_counts().reset_index()
             table_data1.columns = ["Жауап", "Саны"]
@@ -87,7 +87,7 @@ def plot_responses(df, plot_types):
                           color="18. Қашықтықтан оқыту кезінде гимнастикалық жаттығуды Сіз күніне неше рет жасайсыз?",
                           barmode='group',
                           title="Қашықтықтан оқыту кезінде гимнастикалық жаттығуды Сіз күніне неше рет жасайсыз?")
-            fig2.update_layout(xaxis_tickangle=-45, width=1000, height=600, legend=dict(x=1, y=0.5))
+            fig2.update_layout(xaxis_tickangle=-45, width=800, height=400, legend=dict(x=1, y=0.5))
             st.plotly_chart(fig2, use_container_width=True)
             table_data2 = df.groupby(["16. Компьютерде күніне қанша сағат отырасыз?", "18. Қашықтықтан оқыту кезінде гимнастикалық жаттығуды Сіз күніне неше рет жасайсыз?"]).size().reset_index(name='Саны')
             st.write(table_data2)
@@ -96,7 +96,7 @@ def plot_responses(df, plot_types):
             fig3 = px.bar(df,
                           x="15. Үй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма?",
                           title="Сізге онлайн сабақтарға қатысу ыңғайлы ма?")
-            fig3.update_layout(xaxis_tickangle=-45, width=1000, height=600, legend=dict(x=1, y=0.5))
+            fig3.update_layout(xaxis_tickangle=-45, width=800, height=400, legend=dict(x=1, y=0.5))
             st.plotly_chart(fig3, use_container_width=True)
             table_data3 = df["15. Үй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма?"].value_counts().reset_index()
             table_data3.columns = ["Жауап", "Саны"]
@@ -108,7 +108,7 @@ def plot_responses(df, plot_types):
                           color="22. Сізге қалай сабақ оқу ыңғайлы?",
                           barmode='group',
                           title="Сізге онлайн сабақтарға қатысу ыңғайлы ма? / Сізге қалай сабақ оқу ыңғайлы?")
-            fig4.update_layout(xaxis_tickangle=-45, width=1000, height=600, legend=dict(x=1, y=0.5))
+            fig4.update_layout(xaxis_tickangle=-45, width=800, height=400, legend=dict(x=1, y=0.5))
             st.plotly_chart(fig4, use_container_width=True)
             table_data4 = df.groupby(["15. Үй жағдайында Сізге онлайн сабақтарға қатысу ыңғайлы ма?", "22. Сізге қалай сабақ оқу ыңғайлы?"]).size().reset_index(name='Саны')
             st.write(table_data4)
@@ -116,7 +116,7 @@ def plot_responses(df, plot_types):
             fig = px.pie(df,
                          names="27. Компьютер немесе гаджет салдарынан отбасы мүшелерімен жанжал туындайды ма?",
                          title="Компьютер немесе гаджет салдарынан отбасы мүшелерімен жанжал туындайды ма?")
-            fig.update_layout(width=1000, height=600, legend=dict(x=1, y=0.5))
+            fig.update_layout(width=800, height=400, legend=dict(x=1, y=0.5))
             st.plotly_chart(fig, use_container_width=True)
             table_data = df["27. Компьютер немесе гаджет салдарынан отбасы мүшелерімен жанжал туындайды ма?"].value_counts().reset_index()
             table_data.columns = ["Жауап", "Sаны"]
@@ -125,7 +125,7 @@ def plot_responses(df, plot_types):
             fig = px.pie(df,
                          names="10. Мұғалімнің тапсырмаларын қалай жиі орындайсыз?",
                          title="Мұғалімнің тапсырмаларын қалай жиі орындайсыз?")
-            fig.update_layout(width=1000, height=600, legend=dict(x=1, y=0.5))
+            fig.update_layout(width=800, height=400, legend=dict(x=1, y=0.5))
             st.plotly_chart(fig, use_container_width=True)
             table_data = df["10. Мұғалімнің тапсырмаларын қалай жиі орындайсыз?"].value_counts().reset_index()
             table_data.columns = ["Жауап", "Саны"]
@@ -134,7 +134,7 @@ def plot_responses(df, plot_types):
             fig = px.bar(df,
                          x="13. Сіз қалай ойлайсыз, сіз қашықтықтан оқыту кезінде белсенді бола алдыңыз ба?",
                          title="Сіз қашықтықтан оқыту кезінде белсенді бола алдыңыз ба?")
-            fig.update_layout(xaxis_tickangle=-45, width=1000, height=600, legend=dict(x=1, y=0.5))
+            fig.update_layout(xaxis_tickangle=-45, width=800, height=400, legend=dict(x=1, y=0.5))
             st.plotly_chart(fig, use_container_width=True)
             table_data = df["13. Сіз қалай ойлайсыз, сіз қашықтықтан оқыту кезінде белсенді бола алдыңыз ба?"].value_counts().reset_index()
             table_data.columns = ["Жауап", "Саны"]
