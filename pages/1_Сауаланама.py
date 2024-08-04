@@ -18,8 +18,12 @@ from datetime import datetime
 
 # Set page configuration at the very top
 st.set_page_config(page_title="Сауалнама", page_icon="📈")
-
 st.sidebar.header("Сауалнаманы құру")
+
+# Check if the user is logged in
+if not st.session_state.get("password_correct", False):
+    st.error("Алдымен жүйеге кіру керек!")
+    st.stop()
 
 # Function to create URL for Google Form
 SCOPES = ["https://www.googleapis.com/auth/forms.body", "https://www.googleapis.com/auth/forms.responses.readonly"]
