@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import base64
 import requests
+import pandas as pd
 
 # Set page configuration
 st.set_page_config(page_title="Survey History", page_icon="📜")
@@ -45,7 +46,14 @@ st.title("Сауалнамалар тарихы")
 
 if survey_links:
     st.subheader("Сауалнама сілтемелері:")
-    for link in survey_links:
-        st.write(f"- [{link['link_survey']}]({link['link_survey']})")
+
+    # Create a DataFrame for the survey links
+    df = pd.DataFrame(survey_links)
+    df.index += 1  # Start index from 1 for numeration
+    df.reset_index(inplace=True)
+    df.columns = ["№", "link_survey", "create_date"]
+
+    # Display the DataFrame as a table
+    st.table(df)
 else:
     st.write("No survey links found.")
