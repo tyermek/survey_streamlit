@@ -14,6 +14,7 @@ import base64
 import hmac
 import requests
 import time
+from datetime import datetime
 
 # Set page configuration at the very top
 st.set_page_config(page_title="Сауалнама", page_icon="📈")
@@ -188,8 +189,12 @@ def commit_survey_link_to_github(form_url, form_id):
         st.error(f"Error decoding JSON from GitHub: {e}")
         survey_links = []
 
-    # Append the new survey link
-    survey_links.append({"link_survey": form_url})
+    # Append the new survey link with create date
+    current_date = datetime.now().strftime("%d.%m.%Y %H:%M")
+    survey_links.append({
+        "link_survey": form_url,
+        "create_date": current_date
+    })
 
     data = {
         "message": "Add new survey link",
