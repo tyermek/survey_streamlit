@@ -17,7 +17,7 @@ import time
 from datetime import datetime
 
 # Set page configuration at the very top
-st.set_page_config(page_title="Сауалнама", page_icon="📈")
+st.set_page_config(page_title="Платформа туралы", page_icon="📈")
 
 def check_password():
     """Returns `True` if the user had a correct password."""
